@@ -1,0 +1,25 @@
+@font-face {
+  font-family: "xeicon";
+  src: url("../fonts/xeicon.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+.icon {
+  display: inline-block;
+  font-family: "xeicon" !important;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  speak: never;
+  -webkit-font-smoothing: antialiased;
+}
+.xi-bars::before { content: "\e91c"; }
+.xi-close::before { content: "\e921"; }
+.xi-angle-left::before { content: "\e93c"; }
+.xi-angle-right::before { content: "\e93f"; }
+.xi-play::before { content: "\ea3e"; }
+.xi-pause::before { content: "\ea3b"; }
+.xi-instagram::before { content: "\ebe9"; }
+.xi-naver::before { content: "\ebf9"; }
+.xi-youtube-play::before { content: "\ec32"; }

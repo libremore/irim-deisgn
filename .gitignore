@@ -1,0 +1,10 @@
+/_site/
+/.qa-portfolio-*/
+/verification.json
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+.env
+.env.*
