@@ -73,6 +73,7 @@ function document(page, title, content, { home = false, map = false, base = "", 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(home ? "이림디자인" : `${title} | 이림디자인`)}</title>
   <meta name="description" content="${escapeHtml(description)}">
+  ${/^[a-f0-9]{40}$/i.test(process.env.GITHUB_SHA || "") ? `<meta name="site-revision" content="${process.env.GITHUB_SHA}">` : ""}
   <meta name="theme-color" content="#8b7a6c">
   <link rel="icon" type="image/svg+xml" href="${base}assets/favicon.svg">
   ${home ? '<link rel="preload" as="image" href="assets/images/main-01.jpg">\n  <link rel="stylesheet" href="assets/vendor/swiper-bundle.css">' : ""}

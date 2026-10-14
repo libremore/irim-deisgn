@@ -61,6 +61,8 @@ portfolio/
 
 ## 자동 업데이트
 
+**한 번에 업데이트·GitHub 배포:** 프로젝트 최상위의 `publish-portfolio.cmd`를 실행합니다. 생성·검증, 현재 수정 사항 전체의 커밋·push, GitHub Pages 배포와 실제 사이트 최신 버전 확인까지 진행합니다. 필요한 GitHub 로그인도 같은 실행 창에서 안내합니다. 터미널에서는 `node scripts/publish.mjs`를 실행하며, 자세한 옵션은 프로젝트 README를 참고하세요.
+
 **GitHub Pages:** 폴더·사진·`INFORMATION.md`를 추가·수정·이동·삭제한 뒤 `main`에 업로드하면 기존 GitHub Actions가 폴더를 순회하여 목록과 상세 페이지를 생성하고 배포합니다. 최초 Pages 설정은 프로젝트 최상위의 `GITHUB_PAGES.md`를 참고하세요.
 
 **로컬 미리보기:** 프로젝트 최상위의 `preview-portfolio.cmd`를 실행하거나 `node scripts/preview.mjs`를 실행합니다. 표시되는 주소를 열면 됩니다. 실행 창이 열려 있는 동안 약 1초마다 사진과 정보 변경을 확인하여 HTML을 자동 갱신합니다. 변경된 화면은 브라우저를 새로고침해서 확인합니다. 생성 스크립트 변경을 반영하려면 실행 중인 미리보기는 한 번 재시작합니다. 종료는 Ctrl+C입니다.

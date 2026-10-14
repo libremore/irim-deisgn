@@ -33,7 +33,7 @@ test("Pages artifact includes site files but excludes management files", () => f
     writeFileSync(join(directory, "project.json"), "{}");
     writeFileSync(join(directory, "INFORMATION.md"), "## 1. 아파트명과 지역\n아파트명: 폴더와 다른 표시 이름\n지역: 테스트 지역\n\n## 2. 주소\n테스트 주소\n\n## 3. 포트폴리오에 대한 추가적인 설명\n테스트 설명\n");
   }
-  for (const filename of ["README.md", "ANALYSIS.md", "verification.json", "update-portfolio.cmd"]) writeFileSync(join(root, filename), "management file");
+  for (const filename of ["README.md", "ANALYSIS.md", "verification.json", "update-portfolio.cmd", "publish-portfolio.cmd"]) writeFileSync(join(root, filename), "management file");
   mkdirSync(join(root, "scripts"));
   mkdirSync(join(root, ".github"));
   buildSite(root);
@@ -53,7 +53,7 @@ test("Pages artifact includes site files but excludes management files", () => f
     assert.match(readFileSync(join(directory, "index.html"), "utf8"), /폴더와 다른 표시 이름/);
     assert.match(readFileSync(join(directory, "index.html"), "utf8"), /테스트 주소/);
   }
-  for (const filename of ["README.md", "ANALYSIS.md", "verification.json", "update-portfolio.cmd", "scripts", ".github"]) assert.equal(existsSync(join(output, filename)), false);
+  for (const filename of ["README.md", "ANALYSIS.md", "verification.json", "update-portfolio.cmd", "publish-portfolio.cmd", "scripts", ".github"]) assert.equal(existsSync(join(output, filename)), false);
 }));
 
 test("repackaging removes stale projects from generated output only", () => fixture((root) => {

@@ -51,6 +51,27 @@ portfolio/
 
 ## GitHub Pages
 
+**한 번에 업데이트·배포:** 프로젝트 최상위의 **`publish-portfolio.cmd`를 더블클릭**하면 아래 작업을 순서대로 진행합니다.
+
+1. 원격 `main`의 변경 사항 확인
+2. 테스트, 포트폴리오 생성, 원본 링크·사진 검사, 배포 패키지 생성·검사
+3. 현재 저장소의 수정·추가·삭제된 파일 전체를 커밋하고 `origin/main`에 push
+4. 해당 커밋의 GitHub Pages 워크플로와 `deploy` 작업 성공 확인
+5. 실제 포트폴리오 페이지의 배포 버전 확인 후 사이트 주소 출력
+
+Node.js, Git, Python 3.9 이상이 필요합니다. `main` 브랜치에서 실행합니다. 검사 실패나 충돌이 있으면 업로드 전에 중단하며, 변경이 없으면 새 커밋을 만들지 않습니다. 이미 만든 미업로드 커밋은 함께 업로드합니다. `_site`, 검사 결과, `.env` 등 `.gitignore`에 지정한 파일은 커밋하지 않습니다. 이 스크립트는 포트폴리오 사진뿐 아니라 사이트 코드와 안내 문서 등 저장소의 모든 수정 사항을 함께 업로드합니다.
+
+GitHub 인증이 없거나 만료되면 실행 창에서 공식 Git Credential Manager의 로그인 주소·코드를 안내합니다. 인증을 완료하면 같은 실행에서 이어서 업로드합니다. Git Credential Manager가 없는 환경에서는 Git의 로그인 설정을 먼저 완료해야 합니다. 실행 창에 오류가 표시되면 원인을 수정하고 다시 실행하세요. 기존 커밋을 다시 만들거나 강제 푸시하지 않습니다.
+
+터미널에서는 아래처럼 실행합니다.
+
+```powershell
+node scripts/publish.mjs
+node scripts/publish.mjs --message "포트폴리오 사진과 설명 업데이트"
+```
+
+`--validate-only`는 생성·검증만 실행합니다. `--no-wait`는 커밋·push까지 진행하고 배포 상태 링크를 표시합니다. 기본 실행은 Pages 배포와 실제 사이트 확인까지 기다립니다. 배포 확인에는 최대 15분, 실제 사이트 버전 확인에는 추가로 최대 3분을 기다리며, 시간이 초과하면 완료된 업로드와 미확인 배포 상태를 구분해 안내합니다.
+
 `.github/workflows/pages.yml`에 자동 배포 설정을 준비했습니다. GitHub 저장소에서 **Settings > Pages > Source > GitHub Actions**를 선택한 뒤 `main`에 파일을 업로드하면 테스트와 정적 사이트 생성을 거쳐 배포합니다. 사진만 추가해도 포트폴리오 목록과 상세 페이지가 자동 갱신됩니다.
 
 실제 저장소 생성·업로드와 Pages 설정은 별도로 필요합니다. 처음 배포 방법과 오류 확인은 [GITHUB_PAGES.md](GITHUB_PAGES.md)에 정리했습니다. 배포 대상은 `_site`에 모으며 관리 문서와 스크립트는 사이트 파일에서 제외됩니다. 공개 저장소에서는 이 소스 파일들도 GitHub를 통해 공개됩니다.
@@ -69,6 +90,7 @@ portfolio/
 - 프로젝트 정보 양식 읽기: `scripts/information.mjs`
 - 로컬 포트폴리오 변경 감지: `scripts/watch-portfolio.mjs`
 - GitHub Pages 배포 패키징: `scripts/package-pages.mjs`
+- 생성·검증·GitHub 업로드·Pages 배포 확인: `scripts/publish.mjs` / `publish-portfolio.cmd`
 
 HTML 파일을 직접 편집해 사용할 수 있습니다. 공통 템플릿에서 여러 페이지를 다시 생성하려면 Node.js로 아래 명령을 실행합니다. **재생성하면 HTML 파일의 직접 수정 내용이 덮어써집니다.**
 

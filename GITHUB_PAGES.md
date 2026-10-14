@@ -32,6 +32,14 @@ git push -u origin main
 
 ## 이후 포트폴리오 업데이트
 
+**`publish-portfolio.cmd`를 한 번 실행**하면 포트폴리오 생성·검증, 현재 수정 사항 전체의 커밋·push, 해당 커밋의 GitHub Pages 배포 확인까지 자동으로 진행합니다. 터미널에서는 `node scripts/publish.mjs`를 실행합니다. Node.js, Git, Python 3.9 이상이 필요하며 `main` 브랜치에서 실행합니다.
+
+인증이 필요한 경우 Git Credential Manager의 기기 인증 주소와 코드를 실행 창에서 안내합니다. 인증 완료 후 같은 실행에서 이어집니다. `--message "커밋 메시지"`로 메시지를 지정하고, `--validate-only`로 생성·검증만 실행하거나, `--no-wait`로 push 후 배포 완료 대기를 생략할 수 있습니다. 변경 없는 실행에서는 커밋을 만들지 않으며, 기존 미업로드 커밋이 있으면 함께 push합니다.
+
+원격 `main`이 앞서 있고 로컬에 수정 사항·별도 커밋이 있으면 파일을 덮어쓰지 않고 중단합니다. 변경 내용을 병합한 뒤 다시 실행하세요. 검사 실패·인증 실패·배포 실패는 오류로 표시하며, 배포에 실패한 경우 링크가 표시되는 Actions 화면에서 원인을 확인합니다.
+
+스크립트는 [GitHub Actions API](https://docs.github.com/en/rest/actions/workflow-runs#list-workflow-runs-for-a-repository)에서 업로드한 SHA와 일치하는 워크플로를 확인합니다. `deploy` 작업 성공 후 실제 페이지의 `site-revision` 메타 정보도 비교합니다. 이 버전 표시는 GitHub Actions의 `GITHUB_SHA`로 생성되므로 이전 배포 화면을 최신 결과로 잘못 안내하지 않습니다.
+
 `portfolio/주거공간/프로젝트 폴더/리모델링 구역/` 또는 `portfolio/상업공간/프로젝트 폴더/리모델링 구역/` 아래에 사진을 추가하고, 프로젝트 폴더의 `INFORMATION.md`에 아파트명·지역·주소·설명을 작성한 뒤 `main`에 커밋·업로드하면 됩니다. 폴더명은 자유롭게 정하며, 화면에는 정보 파일의 내용을 표시합니다. 기본 양식은 `portfolio/INFORMATION.template.md`입니다. 사진은 임의의 파일명을 사용할 수 있고 번호별 우선순위가 없습니다. GitHub Actions가 폴더를 순회하여 목록과 상세 갤러리를 자동 생성하므로 사진이나 정보 파일만 수정한 경우에도 반영됩니다. 구역·프로젝트의 추가, 이름 변경, 삭제도 다음 배포에 반영됩니다.
 
 로컬에서 한 번 갱신하려면 `update-portfolio.cmd`를, 변경 자동 감지 미리보기에는 `preview-portfolio.cmd`를 실행하세요. 미리보기 주소에서 브라우저를 새로고침하면 변경된 사진이 표시됩니다. 워크플로는 `scripts/build.mjs`로 루트 HTML과 상세 HTML을 재생성하므로 디자인·문구 변경은 해당 생성 스크립트에서 수정합니다. 생성된 HTML만 직접 수정하면 다음 자동 배포에서 덮어써집니다.
