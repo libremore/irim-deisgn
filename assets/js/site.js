@@ -94,6 +94,72 @@
     });
   }
 
+  const photoDialog = document.querySelector(".photo-dialog");
+  const photoLinks = [...document.querySelectorAll("[data-project-photo]")];
+  if (photoDialog && typeof photoDialog.showModal === "function" && photoLinks.length) {
+    const image = photoDialog.querySelector(".photo-dialog-image");
+    const caption = photoDialog.querySelector("#photo-caption");
+    const original = photoDialog.querySelector(".photo-original");
+    let selected = 0;
+    let opener;
+    const showPhoto = (index) => {
+      selected = (index + photoLinks.length) % photoLinks.length;
+      const link = photoLinks[selected];
+      image.src = link.href;
+      image.alt = link.querySelector("img").alt;
+      caption.textContent = link.dataset.caption;
+      original.href = link.href;
+    };
+    photoLinks.forEach((link, index) => link.addEventListener("click", (event) => {
+      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      opener = link;
+      showPhoto(index);
+      photoDialog.showModal();
+      document.body.classList.add("photo-viewer-open");
+      photoDialog.querySelector(".photo-close").focus();
+    }));
+    const previous = photoDialog.querySelector(".photo-prev");
+    const next = photoDialog.querySelector(".photo-next");
+    previous.disabled = next.disabled = photoLinks.length < 2;
+    previous.addEventListener("click", () => showPhoto(selected - 1));
+    next.addEventListener("click", () => showPhoto(selected + 1));
+    photoDialog.querySelector(".photo-close").addEventListener("click", () => photoDialog.close());
+    photoDialog.addEventListener("click", (event) => { if (event.target === photoDialog) photoDialog.close(); });
+    photoDialog.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+        showPhoto(selected + (event.key === "ArrowLeft" ? -1 : 1));
+      }
+    });
+    photoDialog.addEventListener("close", () => {
+      document.body.classList.remove("photo-viewer-open");
+      opener?.focus({ preventScroll: true });
+    });
+  }
+
+  const areaNav = document.querySelector(".project-area-nav");
+  if (areaNav) {
+    const areas = [...document.querySelectorAll(".project-area")];
+    const links = [...areaNav.querySelectorAll("a")];
+    let scheduled = false;
+    const updateArea = () => {
+      const threshold = areaNav.getBoundingClientRect().height + 45;
+      let current = areas[0];
+      areas.forEach((area) => { if (area.getBoundingClientRect().top <= threshold) current = area; });
+      links.forEach((link) => {
+        if (link.hash === `#${current.id}`) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      });
+      scheduled = false;
+    };
+    window.addEventListener("scroll", () => {
+      if (!scheduled) { scheduled = true; window.requestAnimationFrame(updateArea); }
+    }, { passive: true });
+    window.addEventListener("resize", updateArea);
+    updateArea();
+  }
+
   const mapContainer = document.getElementById("daumRoughmapContainer1752652283558");
   if (mapContainer) {
     const fallback = document.querySelector(".map-fallback");

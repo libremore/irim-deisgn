@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { dirname, resolve, sep, extname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { watchPortfolio } from "./watch-portfolio.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const pages = new Set(["index.html", "brand-story.html", "portfolio.html", "portfolio-residential.html", "portfolio-commercial.html", "contact.html", "location.html"]);
@@ -18,10 +19,10 @@ const server = createServer(async (request, response) => {
     const segments = path.split("/");
     const portfolioFile = segments[0] === "portfolio"
       && ["주거공간", "상업공간"].includes(segments[1])
-      && segments.length === 4
-      && segments.every((segment) => segment && segment !== "." && segment !== ".." && !segment.includes("\\"))
+      && segments.length >= 4
+      && segments.every((segment) => segment && !segment.startsWith(".") && !segment.includes("\\"))
       && filename.startsWith(root + sep + "portfolio" + sep)
-      && (segments[3] === "index.html" || [".jpg", ".jpeg", ".png", ".webp", ".avif"].includes(extname(filename).toLowerCase()));
+      && ((segments.length === 4 && segments[3] === "index.html") || [".jpg", ".jpeg", ".png", ".webp", ".avif"].includes(extname(filename).toLowerCase()));
     if (!pages.has(path) && !asset && !portfolioFile) {
       response.writeHead(404).end("Not found");
       return;
@@ -33,10 +34,14 @@ const server = createServer(async (request, response) => {
     response.writeHead(404).end("Not found");
   }
 });
+const watcher = watchPortfolio(root);
 let port = Number(process.env.IRIM_PREVIEW_PORT || 4173);
 server.on("error", (error) => {
   if (error.code === "EADDRINUSE" && port < 4183) server.listen(++port, "127.0.0.1");
   else { console.error(error.message); process.exit(1); }
 });
-server.on("listening", () => console.log(`Static preview: http://127.0.0.1:${port}`));
+server.on("listening", () => console.log(`Static preview: http://127.0.0.1:${port}\nPortfolio folder changes are rebuilt automatically. Refresh the browser to see updates.`));
+const shutdown = () => { watcher.close(); server.close(() => process.exit(0)); };
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
 server.listen(port, "127.0.0.1");

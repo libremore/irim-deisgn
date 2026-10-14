@@ -2,6 +2,7 @@ import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { DETAIL_MARKER, escapeHtml, readProjectFolders, readProjects, renderPortfolio, renderProject } from "./portfolio.mjs";
+import { INFORMATION_TEMPLATE } from "./information.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLScIuzPk0trg4bnqM4qamHxsrbZM0e8iIzPn0qtpEdqQVyGGUQ/viewform";
@@ -180,6 +181,11 @@ const location = `<section aria-label="찾아오시는 길">
 export function buildSite(outputRoot = root) {
   const portfolioRoot = resolve(outputRoot, "portfolio");
   const projects = readProjects(portfolioRoot);
+  // Supply an editable template for each new project without overwriting notes.
+  for (const { directory } of readProjectFolders(portfolioRoot)) {
+    const informationPath = resolve(directory, "INFORMATION.md");
+    if (!existsSync(informationPath)) writeFileSync(informationPath, INFORMATION_TEMPLATE, { encoding: "utf8", flag: "wx" });
+  }
   const pages = [
     ["index.html", document("home", "이림디자인", home, { home: true })],
     ["brand-story.html", document("brand", "BRAND STORY", brand)],
@@ -190,14 +196,14 @@ export function buildSite(outputRoot = root) {
     ["location.html", document("location", "LOCATION", location, { map: true })],
   ];
   for (const project of projects) {
-    pages.push([`portfolio/${project.category}/${project.title}/index.html`, document("portfolio", project.title, renderProject(project), {
+    pages.push([`portfolio/${project.category}/${project.folderName}/index.html`, document("portfolio", project.title, renderProject(project), {
       base: "../../../",
       detail: true,
-      description: `${project.title} | 이림디자인 ${project.category} 포트폴리오. 대표 사진과 상세 사진.`,
+      description: `${project.title} | 이림디자인 ${project.category} 포트폴리오.${project.region ? ` ${project.region}.` : ""} ${project.description ? project.description.replace(/\s+/g, " ").slice(0, 160) : `${project.areas.map((area) => area.title).join(", ")} 구역별 리모델링 사진.`}`,
     })]);
   }
   for (const [filename, html] of pages) {
-    writeFileSync(resolve(outputRoot, filename), html, "utf8");
+    writeFileSync(resolve(outputRoot, filename), html.replace(/[ \t]+$/gm, ""), "utf8");
     console.log(`Generated ${filename}`);
   }
   // Remove only our generated detail when all photos were removed from a project.

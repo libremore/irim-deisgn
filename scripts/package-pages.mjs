@@ -13,8 +13,8 @@ export function packagePages(sourceRoot = root) {
   const projects = readProjects(join(sourceRoot, "portfolio"));
   const files = [...pages, ".nojekyll"];
   for (const project of projects) {
-    const directory = join("portfolio", project.category, project.title);
-    files.push(join(directory, "index.html"), ...project.images.map((image) => join(directory, image.filename)));
+    const directory = join("portfolio", project.category, project.folderName);
+    files.push(join(directory, "index.html"), ...project.images.map((image) => join(directory, image.relativePath)));
   }
   for (const filename of files) {
     if (!lstatSync(join(sourceRoot, filename)).isFile()) throw new Error(`Expected a regular public file: ${filename}`);
